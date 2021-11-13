@@ -14,7 +14,7 @@ func GetDevice(vendorID, productID uint16) (hid.Device, error) {
 	var dev hid.Device
 
 	hid.UsbWalk(func(d hid.Device) {
-		if d.Info().Product == 0x3008 && d.Info().Vendor == 0x1e71 {
+		if d.Info().Product == productID && d.Info().Vendor == vendorID {
 			dev = d
 		}
 	})
