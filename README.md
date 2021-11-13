@@ -1,5 +1,5 @@
 # liquidctl-cpu-temp
-shitty script that monitors cpu temps and sets cpu cooler temps accodording to entered fan/pump curves.
+shitty script that monitors cpu temps and sets cpu cooler temps according to entered fan/pump curves.
 Only tested on NZXT kraken z63
 
 requires lm-sensors and liquidctl to be installed
