@@ -14,8 +14,7 @@ type Config struct {
 	ProductID uint16 `yaml:"productID"`
 	VendorID  uint16 `yaml:"vendorID"`
 
-	LiquidctlDeviceID string  `yaml:"liquidctlDeviceID"`
-	RefreshDelay      float64 `yaml:"refreshDelay"`
+	RefreshDelay float64 `yaml:"refreshDelay"`
 
 	FanCurve  map[int]int `yaml:"fanCurve"`
 	PumpCurve map[int]int `yaml:"pumpCurve"`
@@ -30,8 +29,13 @@ func init() {
 
 	exampleConfig := Config{
 		TemperatureDevice: "cpu_temp_device",
-		LiquidctlDeviceID: "0",
-		RefreshDelay:      1.5,
+		TemperaturePath:   "/sys/devices/pci0000:00/0000:00:00.0/hwmon/hwmon2/temp1_input",
+
+		// kraken Zx3 IDS
+		ProductID: 0x3008,
+		VendorID:  0x1e71,
+
+		RefreshDelay: 1.1,
 		FanCurve: map[int]int{
 			35: 40,
 			40: 45,
