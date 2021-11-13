@@ -8,7 +8,12 @@ import (
 )
 
 type Config struct {
-	TemperatureDevice string  `yaml:"temperatureDevice"`
+	TemperatureDevice string `yaml:"temperatureDevice"`
+	TemperaturePath   string `yaml:"temperaturePath"`
+
+	ProductID uint16 `yaml:"productID"`
+	VendorID  uint16 `yaml:"vendorID"`
+
 	LiquidctlDeviceID string  `yaml:"liquidctlDeviceID"`
 	RefreshDelay      float64 `yaml:"refreshDelay"`
 

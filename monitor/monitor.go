@@ -6,8 +6,9 @@ import (
 	"time"
 
 	"github.com/yanando/cpu-temp/config"
-	"github.com/yanando/cpu-temp/liquidctl"
 	"github.com/yanando/cpu-temp/sensor"
+	"github.com/yanando/cpu-temp/usbdriver"
+	"github.com/yanando/cpu-temp/usbdriver/devices"
 )
 
 type coefMatch struct {
@@ -18,8 +19,6 @@ type coefMatch struct {
 type Monitor struct {
 	Config config.Config
 
-	liquidctlDevice liquidctl.LiquidctlDevice
-
 	// ordered from cool -> hot temps
 	fanCurveCoefficients  []coefMatch
 	pumpCurveCoefficients []coefMatch
@@ -29,28 +28,53 @@ func (m *Monitor) Start() {
 	m.fanCurveCoefficients = calculateCoefficient(m.Config.FanCurve)
 	m.pumpCurveCoefficients = calculateCoefficient(m.Config.PumpCurve)
 
-	m.liquidctlDevice = liquidctl.LiquidctlDevice{
-		ID: m.Config.LiquidctlDeviceID,
+	device, err := usbdriver.GetDevice(m.Config.VendorID, m.Config.ProductID)
+
+	if err != nil {
+		log.Fatalf("Error getting device: %v", err)
 	}
 
-	for {
-		temp, err := sensor.GetTemp(m.Config.TemperatureDevice)
+	kraken := devices.KrakenZ{HidDev: device}
 
-		if err != nil {
-			log.Fatalf("Error getting temperature: %v", err)
+	err = kraken.Open()
+
+	if err != nil {
+		log.Fatalf("Error opening krakenz device")
+	}
+
+	defer kraken.Close()
+	for {
+		var temp float64
+
+		if m.Config.TemperaturePath != "" {
+			t, err := sensor.GetKernelTemp(m.Config.TemperaturePath)
+
+			if err != nil {
+				log.Fatalf("Error getting temperature: %v", err)
+			}
+
+			temp = t
+		} else {
+			t, err := sensor.GetTemp(m.Config.TemperatureDevice)
+
+			if err != nil {
+				log.Fatalf("Error getting temperature: %v", err)
+			}
+
+			temp = t
 		}
 
 		fanspeed, pumpspeed := m.calculateSpeedsFromTemp(temp)
 
 		fmt.Printf("Temperature: %.01f°C\nFan speed: %d%%\nPump speed: %d%%\n\n", temp, fanspeed, pumpspeed)
 
-		err = m.liquidctlDevice.SetFanSpeed(fanspeed)
+		err := kraken.SetFanSpeed(fanspeed)
 
 		if err != nil {
 			log.Fatalf("Error setting fan speed: %v", err)
 		}
 
-		err = m.liquidctlDevice.SetPumpSpeed(pumpspeed)
+		err = kraken.SetPumpSpeed(pumpspeed)
 
 		if err != nil {
 			log.Fatalf("Error setting pump speed: %v", err)

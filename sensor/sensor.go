@@ -3,6 +3,7 @@ package sensor
 import (
 	"errors"
 	"log"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -18,7 +19,8 @@ func init() {
 	output, err := exec.Command("sensors", "-v").Output()
 
 	if err != nil || !strings.Contains(string(output), "sensors version") {
-		log.Fatal("sensors not installed")
+		log.Println("sensors not installed")
+		return
 	}
 
 	log.Printf("sensors installed: %s", string(output))
@@ -58,4 +60,20 @@ func GetTemp(device string) (float64, error) {
 	}
 
 	return tempFloat, nil
+}
+
+func GetKernelTemp(pathToTempFile string) (float64, error) {
+	stringBytes, err := os.ReadFile(pathToTempFile)
+
+	if err != nil {
+		return 0, err
+	}
+
+	float, err := strconv.ParseFloat(strings.TrimRight(string(stringBytes), "\n"), 64)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return float / 1000, nil
 }

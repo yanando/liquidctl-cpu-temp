@@ -1,3 +1,6 @@
+github.com/zserge/hid v0.0.0-20190124175232-e1626f1782f3 h1:DAdExZJtAXR150WHt4wzTCzHH7lXkD4vKN9xLtF05VU=
+github.com/zserge/hid v0.0.0-20190124175232-e1626f1782f3/go.mod h1:OpyudhSlA/GSwcydk4+0Ex9DBI+9mOs/Pk06vmIjLSA=
+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.4.0 h1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=
 gopkg.in/yaml.v2 v2.4.0/go.mod h1:RDklbk79AGWmwhnvt/jBztapEOGDOx6ZbXqjP6csGnQ=
