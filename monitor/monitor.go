@@ -3,6 +3,9 @@ package monitor
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/yanando/cpu-temp/config"
@@ -42,7 +45,18 @@ func (m *Monitor) Start() {
 		log.Fatalf("Error opening krakenz device")
 	}
 
-	defer kraken.Close()
+	// cleanup
+	go func() {
+		killChan := make(chan os.Signal, 1)
+
+		signal.Notify(killChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+		<-killChan
+
+		kraken.Close()
+		os.Exit(0)
+	}()
+
 	for {
 		var temp float64
 
